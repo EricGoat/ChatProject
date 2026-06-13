@@ -4,7 +4,6 @@ import threading
 control_socket = None
 data_socket = None
 
-
 def read_response(sock):
     data = sock.recv(1024).decode()
 
@@ -26,7 +25,10 @@ def receive_messages():
                 _, sender, message = body.split("\n", 2)
                 print("\r200 status code received.")
                 print(f"Broadcast from {sender}: {message}")
-
+            elif body.startswith("Private\n"):
+                _, sender, message = body.split("\n", 2)
+                print("\r200 status code received.")
+                print(f"Private from {sender}: {message}")
         else:
             print("500 status code received.")
             if body:
@@ -64,14 +66,10 @@ def main():
 
             if code == "200":
                 data_port = int(body)
-
-                print(
-                    f"200 status code received. Starting data connection on port {data_port}"
-                )
+                print(f"200 status code received. Starting data connection on port {data_port}")
 
                 data_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 data_socket.connect((server_ip, data_port))
-
             else:
                 print("500 status code received. Connection failed")
 
@@ -98,6 +96,17 @@ def main():
                 continue
 
             control_socket.sendall((user_input + "\n").encode())
+            
+        elif command == "private":
+            if control_socket is None or data_socket is None:
+                print("Connect to a server first")
+                continue
+
+            if len(parts) < 3:
+                print("Usage: private <username> <message>")
+                continue
+
+            control_socket.sendall((user_input + "\n").encode())
 
         elif command == "quit":
             if control_socket is None or data_socket is None:
@@ -114,7 +123,6 @@ def main():
 
     if data_socket:
         data_socket.close()
-
 
 if __name__ == "__main__":
     main()
