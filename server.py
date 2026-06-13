@@ -3,7 +3,12 @@ import sys
 import threading
 
 clients = {}
+clients_lock = threading.Lock()
 
+def broadcast_message(sender, message):
+    with clients_lock:
+        for username, sock in clients.items():
+            send_response(sock, 200, f"Broadcast\n{sender}\n{message}")
 
 def make_response(code, data=""):
     if data:
@@ -61,6 +66,20 @@ def handle_client(control_socket):
                 else:
                     clients[username] = data_socket
                     send_response(data_socket, 200)
+
+            elif cmd == "broadcast":
+                message = arg.strip()
+                if username is None:
+                    send_response(control_socket, 500, "Login first")
+                elif data_socket is None:
+                    send_response(control_socket, 500, "Connect first")
+                elif message == "":
+                    send_response(data_socket, 500, "Missing message")
+                else:
+                    print(f"Broadcast requested by {username}")
+                    print(f"Message: {message}")
+                    send_response(data_socket, 200)
+                    broadcast_message(username, message)
 
             else:
                 response_socket = data_socket or control_socket

@@ -1,4 +1,5 @@
 import socket
+import threading
 
 control_socket = None
 data_socket = None
@@ -13,6 +14,23 @@ def read_response(sock):
 
     return data.strip(), ""
 
+def receive_messages():
+    while True:
+        code, body = read_response(data_socket)
+        if not code:
+            print("Disconnected from server.")
+            break
+
+        if code == "200":
+            if body.startswith("Broadcast\n"):
+                _, sender, message = body.split("\n", 2)
+                print("\r200 status code received.")
+                print(f"Broadcast from {sender}: {message}")
+
+        else:
+            print("500 status code received.")
+            if body:
+                print(body)
 
 def main():
     global control_socket
@@ -68,12 +86,24 @@ def main():
 
             if code == "200":
                 print("200 status code received. Login successful")
+                threading.Thread(target=receive_messages, daemon=True).start()
             else:
                 print("500 status code received.")
                 if body:
                     print(body)
+        
+        elif command == "broadcast":
+            if control_socket is None or data_socket is None:
+                print("Connect to a server first")
+                continue
+
+            control_socket.sendall((user_input + "\n").encode())
 
         elif command == "quit":
+            if control_socket is None or data_socket is None:
+                print("Connect to a server.")
+                continue
+            control_socket.sendall((user_input + "\n").encode())
             break
 
         else:
