@@ -89,6 +89,22 @@ def main():
                 print("500 status code received.")
                 if body:
                     print(body)
+
+        elif command == "who":
+            if control_socket is None or data_socket is None:
+                print("Connect to a server first")
+                continue
+
+            control_socket.sendall((user_input + "\n").encode())
+
+            code, body = read_response(data_socket)
+
+            if code == "200":
+                print(f"200 status code received. Users currently connected: {body}")
+            else:
+                print("500 status code received.")
+                if body:
+                    print(body)
         
         elif command == "broadcast":
             if control_socket is None or data_socket is None:
