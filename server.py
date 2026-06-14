@@ -118,6 +118,11 @@ def handle_client(control_socket):
                             # Route message to the specific recipient's socket
                             send_response(target_sock, 200, f"Private\n{username}\n{message}")
 
+            elif cmd == "quit":
+                print(f"Quit requested by {username}")
+                send_response(control_socket, 200)
+                break
+
             else:
                 response_socket = data_socket or control_socket
                 send_response(response_socket, 500, "Invalid command")

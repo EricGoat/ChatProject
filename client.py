@@ -17,7 +17,6 @@ def receive_messages():
     while True:
         code, body = read_response(data_socket)
         if not code:
-            print("Disconnected from server.")
             break
 
         if code == "200":
@@ -129,6 +128,9 @@ def main():
                 print("Connect to a server.")
                 continue
             control_socket.sendall((user_input + "\n").encode())
+            code, body = read_response(control_socket)
+            if code == "200":
+                print("200 status code received.")
             break
 
         else:
