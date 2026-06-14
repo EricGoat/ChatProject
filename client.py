@@ -29,7 +29,6 @@ def receive_messages():
                 _, sender, message = body.split("\n", 2)
                 print("\r200 status code received.")
                 print(f"Private from {sender}: {message}")
-            else: print(f"\r200 status code received. Users currently connected: {body}")
         else:
             print("500 status code received.")
             if body:
