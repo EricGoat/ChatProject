@@ -63,6 +63,17 @@ def handle_client(control_socket):
                         clients[username] = data_socket
                     send_response(data_socket, 200)
 
+            elif cmd == "who":
+                print("Who requested. Sending users.")
+
+                if username is None:
+                    send_response(data_socket or control_socket, 500, "Login first")
+                else:
+                    with clients_lock:
+                        user_list = ", ".join(clients.keys())
+
+                    send_response(data_socket, 200, user_list)
+
             elif cmd == "broadcast":
                 message = arg.strip()
                 if username is None:
