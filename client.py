@@ -24,14 +24,20 @@ def receive_messages():
                 _, sender, message = body.split("\n", 2)
                 print("\r200 status code received.")
                 print(f"Broadcast from {sender}: {message}")
+                print("> ", end="", flush=True)
             elif body.startswith("Private\n"):
                 _, sender, message = body.split("\n", 2)
                 print("\r200 status code received.")
                 print(f"Private from {sender}: {message}")
+                print("> ", end="", flush=True)
+            elif body == "Message Sent.":
+                print(f"\r200 status code received. {body}")
+                print("> ", end="", flush=True)
         else:
             print("500 status code received.")
             if body:
                 print(body)
+                print("> ", end="", flush=True)
 
 def main():
     global control_socket

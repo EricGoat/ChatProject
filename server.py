@@ -85,7 +85,6 @@ def handle_client(control_socket):
                 else:
                     print(f"Broadcast requested by {username}")
                     print(f"Message: {message}")
-                    send_response(data_socket, 200)
                     broadcast_message(username, message)
 
             elif cmd == "private":
@@ -114,7 +113,7 @@ def handle_client(control_socket):
                             print(f"Private message requested by {username} to {target_user}")
                             print(f"Message: {message}")
                             # Acknowledge the sender
-                            send_response(data_socket, 200)
+                            send_response(data_socket, 200, "Message Sent.")
                             # Route message to the specific recipient's socket
                             send_response(target_sock, 200, f"Private\n{username}\n{message}")
 
