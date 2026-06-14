@@ -72,7 +72,7 @@ def handle_client(control_socket):
                     with clients_lock:
                         user_list = ", ".join(clients.keys())
 
-                    send_response(data_socket, 200, user_list)
+                    send_response(control_socket, 200, user_list)
 
             elif cmd == "broadcast":
                 message = arg.strip()

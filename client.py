@@ -97,7 +97,7 @@ def main():
 
             control_socket.sendall((user_input + "\n").encode())
 
-            code, body = read_response(data_socket)
+            code, body = read_response(control_socket)
 
             if code == "200":
                 print(f"200 status code received. Users currently connected: {body}")
